@@ -1,3 +1,9 @@
+/**
+ * Item represents an item that GildedRose sells.
+ * it has the following properties:
+ *  - SellIn: value which denotes the number of days we have to sell the item
+ *  - Quality: value which denotes how valuable the item is
+ */
 export class Item {
   name: string;
   sellIn: number;
@@ -10,6 +16,10 @@ export class Item {
   }
 }
 
+/**
+ * GildedRose is our inventory tracking system.
+ * It can update the values of our inventory.
+ */
 export class GildedRose {
   items: Array<Item>;
 
@@ -18,7 +28,9 @@ export class GildedRose {
   }
 
   updateQuality() {
+    // Iterate over every inventory item.
     for (let i = 0; i < this.items.length; i++) {
+      // Check for special cases of quality.
       if (this.items[i].name != 'Aged Brie' && this.items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
         if (this.items[i].quality > 0) {
           if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
@@ -26,6 +38,7 @@ export class GildedRose {
           }
         }
       } else {
+        // Reduce quality
         if (this.items[i].quality < 50) {
           this.items[i].quality = this.items[i].quality + 1
           if (this.items[i].name == 'Backstage passes to a TAFKAL80ETC concert') {
@@ -42,9 +55,11 @@ export class GildedRose {
           }
         }
       }
+      // Reduce SellIn value
       if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
         this.items[i].sellIn = this.items[i].sellIn - 1;
       }
+      // Reduce quality twice as fast.
       if (this.items[i].sellIn < 0) {
         if (this.items[i].name != 'Aged Brie') {
           if (this.items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
