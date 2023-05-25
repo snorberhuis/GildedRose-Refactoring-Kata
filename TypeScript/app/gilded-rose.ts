@@ -15,6 +15,22 @@ export class Item{
     this.sellIn = sellIn;
     this.quality = quality;
   }
+
+  public getSellIn(): number {
+    return this.sellIn
+  }
+
+  public getQuality(): number {
+    return this.quality
+  }
+
+  public addQuality() {
+    this.quality += 1
+  }
+
+  public substractQuality() {
+    this.quality -= 1
+  }
 }
 
 /**
@@ -33,7 +49,7 @@ export class GildedRose {
     for (let i = 0; i < this.items.length; i++) {
       // Check for special cases of quality.
       if (this.items[i].name != 'Aged Brie' && this.items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
-        if (this.items[i].quality > 0) {
+        if (this.items[i].getQuality() > 0) {
           if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
             this.items[i].quality = this.items[i].quality - 1
           }
