@@ -2,7 +2,7 @@ export interface InventoryItem {
   /**
    * updateQuality updates the Quality and SellIn values for the inventory item
    */
-  updateQuality()
+  updateEndOfDay()
 
   /**
    * getQuality returns the current Quality Value of InventoryItem
@@ -20,6 +20,87 @@ export interface InventoryItem {
   getName(): string;
 }
 
+/**
+ * BaseItem provides standard behavior for InventoryItems.
+ */
+class BaseItem implements InventoryItem{
+  name: string;
+  sellIn: number;
+  quality: number;
+
+  protected constructor(name, sellIn, quality) {
+    this.name = name;
+    this.sellIn = sellIn;
+    this.quality = quality;
+  }
+
+  getQuality(): number {
+    return this.quality
+  }
+  getSellIn(): number {
+    return this.sellIn
+  }
+
+  /**
+   * updateSellInEndOfDay updates using the standard behaviour
+   * @protected
+   */
+  protected updateSellInEndOfDay() {
+    this.sellIn -= 1
+  }
+
+  /**
+   * updateQualityEndOfDay updates the Quality with the standard behaviour.
+   * It returns how much the quality was degraded.
+   * @protected
+   */
+  protected updateQualityEndOfDay() : number{
+    // Degrade twice as fast after sellIn date
+    const degration = (this.sellIn < 0) ? 2 : 1
+    this.quality -= degration
+    this.validateQuality()
+    return degration
+  }
+
+  protected validateQuality() {
+    this.quality = (this.quality < 0) ? 0 : this.quality
+  }
+
+  getName(): string {
+    return this.name
+  }
+
+  updateEndOfDay() {
+    this.updateQualityEndOfDay()
+    this.updateSellInEndOfDay()
+  }
+
+}
+
+/**
+ * ConjuredItems degrade in Quality twice as fast as normal items.
+ */
+export class ConjuredItem extends BaseItem implements InventoryItem {
+
+  constructor(name, sellIn, quality) {
+    super(name, sellIn, quality)
+  }
+
+  protected updateQualityEndOfDay(): number {
+    const degradation = super.updateQualityEndOfDay()
+    this.quality -= degradation
+    this.validateQuality()
+    return 2 * degradation
+  }
+
+  updateEndOfDay() {
+    this.updateQualityEndOfDay()
+
+    this.updateSellInEndOfDay()
+
+  }
+
+}
 
 /**
  * LegacyItem represents an item that GildedRose sells.
@@ -29,28 +110,13 @@ export interface InventoryItem {
  *  - SellIn: value which denotes the number of days we have to sell the item
  *  - Quality: value which denotes how valuable the item is
  */
-export class LegacyItem implements InventoryItem{
-  name: string;
-  sellIn: number;
-  quality: number;
+export class LegacyItem extends BaseItem implements InventoryItem{
 
   constructor(name, sellIn, quality) {
-    this.name = name;
-    this.sellIn = sellIn;
-    this.quality = quality;
+    super(name, sellIn, quality)
   }
 
-  getQuality(): number {
-        return this.quality
-    }
-    getSellIn(): number {
-        return this.sellIn
-    }
-    getName(): string {
-        return this.name
-    }
-
-  updateQuality() {
+  updateEndOfDay() {
     // Check for special cases of quality.
     if (this.name != 'Aged Brie' && this.name != 'Backstage passes to a TAFKAL80ETC concert') {
       if (this.quality > 0) {
@@ -115,7 +181,7 @@ export class GildedRose {
   updateQuality() {
     // Iterate over every inventory item.
     for (let i = 0; i < this.items.length; i++) {
-      this.items[i].updateQuality()
+      this.items[i].updateEndOfDay()
     }
 
     return this.items;

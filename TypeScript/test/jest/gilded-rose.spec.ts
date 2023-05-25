@@ -1,4 +1,4 @@
-import { LegacyItem, GildedRose } from '@/gilded-rose';
+import {LegacyItem, GildedRose, ConjuredItem} from '@/gilded-rose';
 
 describe('Gilded Rose', () => {
   describe('updating Quality', () => {
@@ -44,3 +44,45 @@ describe('Gilded Rose', () => {
     });
   })
 });
+
+describe("Conjured", () => {
+  describe('SellIn', () => {
+    it("Should decrease every day", () => {
+      const item = new ConjuredItem("foo", 1, 2)
+
+      item.updateEndOfDay()
+
+      expect(item.getSellIn()).toBe(0)
+    })
+  });
+  describe('Quality', () => {
+    it("Should decrease twice as fast before the sell date", () => {
+      const item = new ConjuredItem("foo", 1, 4)
+
+      item.updateEndOfDay()
+
+      expect(item.getQuality()).toBe(2)
+    })
+    it("Should decrease twice as fast on the sell date", () => {
+      const item = new ConjuredItem("foo", 0, 8)
+
+      item.updateEndOfDay()
+
+      expect(item.getQuality()).toBe(6)
+    })
+    it("Should decrease four times as fast after the sell date", () => {
+      const item = new ConjuredItem("foo", -1, 4)
+
+      item.updateEndOfDay()
+
+      expect(item.getQuality()).toBe(0)
+    })
+    it("The quality should never be negative", () => {
+      const item = new ConjuredItem("foo", -1, 2)
+
+      item.updateEndOfDay()
+
+      expect(item.getQuality()).toBe(0)
+    })
+  })
+})
