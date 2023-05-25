@@ -58,7 +58,6 @@ class BaseItem implements InventoryItem{
     // Degrade twice as fast after sellIn date
     const degration = (this.sellIn < 0) ? 2 : 1
     this.quality -= degration
-    this.validateQuality()
     return degration
   }
 
@@ -73,6 +72,7 @@ class BaseItem implements InventoryItem{
   updateEndOfDay() {
     this.updateQualityEndOfDay()
     this.updateSellInEndOfDay()
+    this.validateQuality()
   }
 
 }
@@ -89,15 +89,7 @@ export class ConjuredItem extends BaseItem implements InventoryItem {
   protected updateQualityEndOfDay(): number {
     const degradation = super.updateQualityEndOfDay()
     this.quality -= degradation
-    this.validateQuality()
     return 2 * degradation
-  }
-
-  updateEndOfDay() {
-    this.updateQualityEndOfDay()
-
-    this.updateSellInEndOfDay()
-
   }
 
 }
