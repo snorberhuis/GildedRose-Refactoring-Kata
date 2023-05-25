@@ -1,10 +1,11 @@
+
 /**
  * Item represents an item that GildedRose sells.
  * it has the following properties:
  *  - SellIn: value which denotes the number of days we have to sell the item
  *  - Quality: value which denotes how valuable the item is
  */
-export class Item {
+export class Item{
   name: string;
   sellIn: number;
   quality: number;
